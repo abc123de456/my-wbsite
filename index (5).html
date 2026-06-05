@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ABC — Developer & Discord</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0d0f14;
+  --bg2:#111318;
+  --bg3:#161820;
+  --panel:#1a1d26;
+  --border:#2a2d3a;
+  --border2:#353847;
+  --green:#00e5a0;
+  --green-dim:#00e5a020;
+  --green-mid:#00e5a060;
+  --blue:#4d9eff;
+  --blue-dim:#4d9eff15;
+  --purple:#a78bfa;
+  --orange:#ff9d4d;
+  --red:#ff5c5c;
+  --text:#e2e4ed;
+  --muted:#6b7280;
+  --muted2:#4b5263;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;overflow-x:hidden;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(13,15,20,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:60px;
+}
+.nav-brand{
+  font-family:var(--mono);font-size:16px;font-weight:700;
+  color:var(--green);text-decoration:none;letter-spacing:0.05em;
+}
+.nav-brand span{color:var(--muted);}
+.nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
+.nav-links a{
+  font-family:var(--mono);font-size:13px;color:var(--muted);
+  text-decoration:none;transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--green);}
+.nav-links a .prefix{color:var(--muted2);}
+.nav-disc{
+  background:transparent;border:1px solid #5865f2;
+  color:#5865f2 !important;
+  padding:6px 16px;border-radius:4px;
+  transition:background 0.2s,color 0.2s !important;
+}
+.nav-disc:hover{background:#5865f2 !important;color:#fff !important;}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;align-items:center;
+  padding:100px 48px 80px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-bg-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(var(--border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:40px 40px;
+  opacity:0.3;
+}
+.hero-bg-glow{
+  position:absolute;
+  width:600px;height:600px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(0,229,160,0.07) 0%,transparent 70%);
+  top:-100px;right:-100px;
+  pointer-events:none;
+}
+.hero-content{position:relative;z-index:2;max-width:760px;}
+
+.terminal-bar{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:6px;padding:8px 14px;
+  margin-bottom:32px;
+}
+.t-dot{width:8px;height:8px;border-radius:50%;}
+.t-dot.r{background:#ff5c5c;} .t-dot.y{background:#ffbd2e;} .t-dot.g{background:#27c93f;}
+.t-text{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:8px;}
+.t-text span{color:var(--green);}
+
+.hero h1{
+  font-family:var(--mono);
+  font-size:clamp(36px,5vw,68px);
+  font-weight:700;
+  line-height:1.1;
+  margin-bottom:24px;
+  letter-spacing:-0.02em;
+}
+.hero h1 .line1{color:var(--muted);font-weight:300;font-size:0.55em;display:block;letter-spacing:0.1em;margin-bottom:8px;}
+.hero h1 .name{color:var(--text);}
+.hero h1 .cursor{
+  display:inline-block;width:4px;height:0.85em;
+  background:var(--green);vertical-align:middle;
+  animation:blink 1s step-end infinite;margin-left:6px;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+.hero-desc{
+  font-size:16px;color:var(--muted);line-height:1.8;
+  max-width:520px;margin-bottom:40px;
+}
+.hero-desc strong{color:var(--text);font-weight:500;}
+
+.hero-tags{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px;}
+.tag{
+  font-family:var(--mono);font-size:12px;
+  padding:5px 12px;border-radius:4px;
+  border:1px solid var(--border);
+  color:var(--muted);
+  transition:border-color 0.2s,color 0.2s;
+}
+.tag:hover{border-color:var(--green-mid);color:var(--green);}
+.tag.green{border-color:var(--green-mid);color:var(--green);background:var(--green-dim);}
+.tag.blue{border-color:#4d9eff40;color:var(--blue);background:var(--blue-dim);}
+.tag.purple{border-color:#a78bfa40;color:var(--purple);background:#a78bfa15;}
+.tag.orange{border-color:#ff9d4d40;color:var(--orange);background:#ff9d4d15;}
+
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-green{
+  background:var(--green);color:#0d0f14;
+  padding:11px 28px;border-radius:5px;
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  text-decoration:none;letter-spacing:0.04em;
+  transition:opacity 0.2s,transform 0.15s;display:inline-block;
+}
+.btn-green:hover{opacity:0.88;transform:translateY(-1px);}
+.btn-ghost{
+  border:1px solid var(--border2);color:var(--muted);
+  padding:11px 28px;border-radius:5px;
+  font-family:var(--mono);font-size:13px;
+  text-decoration:none;letter-spacing:0.04em;
+  transition:border-color 0.2s,color 0.2s;display:inline-block;
+}
+.btn-ghost:hover{border-color:var(--green-mid);color:var(--green);}
+
+/* CODE BLOCK floating */
+.hero-code{
+  position:absolute;right:48px;top:50%;transform:translateY(-50%);
+  z-index:2;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:8px;
+  width:320px;
+  overflow:hidden;
+  display:none;
+}
+@media(min-width:1100px){.hero-code{display:block;}}
+.code-bar{
+  background:var(--bg3);
+  border-bottom:1px solid var(--border);
+  padding:10px 14px;
+  display:flex;align-items:center;gap:6px;
+}
+.code-bar span{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:8px;}
+.code-body{padding:20px;font-family:var(--mono);font-size:12px;line-height:1.9;}
+.c-green{color:var(--green);}
+.c-blue{color:var(--blue);}
+.c-purple{color:var(--purple);}
+.c-orange{color:var(--orange);}
+.c-muted{color:var(--muted);}
+.c-red{color:var(--red);}
+
+/* SECTIONS */
+section{padding:80px 48px;}
+.section-tag{
+  font-family:var(--mono);font-size:11px;
+  color:var(--green);letter-spacing:0.15em;text-transform:uppercase;
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+.section-tag::before{content:'//';color:var(--muted2);}
+h2{font-family:var(--mono);font-size:clamp(24px,3vw,36px);font-weight:700;color:var(--text);margin-bottom:16px;letter-spacing:-0.02em;}
+.section-sub{font-size:15px;color:var(--muted);max-width:500px;margin-bottom:48px;line-height:1.75;}
+
+/* ABOUT / STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:64px;}
+.stat-box{background:var(--bg2);padding:28px 24px;}
+.stat-num{font-family:var(--mono);font-size:32px;font-weight:700;color:var(--green);line-height:1;}
+.stat-lbl{font-size:12px;color:var(--muted);margin-top:6px;letter-spacing:0.05em;}
+
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+.about-text p{font-size:15px;color:var(--muted);line-height:1.8;margin-bottom:16px;}
+.about-text p strong{color:var(--text);font-weight:500;}
+
+.skill-list{display:flex;flex-direction:column;gap:12px;}
+.skill-item{display:flex;flex-direction:column;gap:6px;}
+.skill-header{display:flex;justify-content:space-between;align-items:center;}
+.skill-name{font-family:var(--mono);font-size:13px;color:var(--text);}
+.skill-pct{font-family:var(--mono);font-size:12px;color:var(--green);}
+.skill-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.skill-fill{height:100%;background:var(--green);border-radius:2px;transition:width 1s ease;}
+
+/* PROJECTS */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;}
+.project-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;padding:24px;
+  transition:border-color 0.2s,transform 0.2s;
+  position:relative;overflow:hidden;
+}
+.project-card:hover{border-color:var(--green-mid);transform:translateY(-3px);}
+.project-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--green),var(--blue));
+  transform:scaleX(0);transform-origin:left;transition:transform 0.3s;
+}
+.project-card:hover::after{transform:scaleX(1);}
+.project-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.project-name{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--text);}
+.project-status{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:3px;}
+.status-live{background:#00e5a015;color:var(--green);border:1px solid var(--green-mid);}
+.status-wip{background:#ff9d4d15;color:var(--orange);border:1px solid #ff9d4d40;}
+.status-alpha{background:#a78bfa15;color:var(--purple);border:1px solid #a78bfa40);}
+.project-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.project-stack{display:flex;flex-wrap:wrap;gap:6px;}
+.stack-tag{font-family:var(--mono);font-size:11px;color:var(--muted2);background:var(--bg3);padding:3px 8px;border-radius:3px;}
+
+/* DISCORD */
+.discord-section{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.discord-card{
+  background:var(--panel);border:1px solid #5865f230;
+  border-radius:10px;padding:40px 36px;
+  display:flex;gap:36px;align-items:center;
+  max-width:700px;
+}
+.discord-icon{
+  width:72px;height:72px;flex-shrink:0;
+  background:#5865f2;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+}
+.discord-icon svg{width:40px;height:40px;fill:#fff;}
+.discord-text h3{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.discord-text p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
+.btn-discord{
+  background:#5865f2;color:#fff;
+  padding:10px 24px;border-radius:5px;
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  text-decoration:none;display:inline-block;
+  transition:background 0.2s;
+}
+.btn-discord:hover{background:#4752c4;}
+
+/* CONTACT */
+.contact-split{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+.contact-form{display:flex;flex-direction:column;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group label{font-family:var(--mono);font-size:11px;color:var(--muted2);letter-spacing:0.1em;text-transform:uppercase;}
+.form-group input,.form-group textarea,.form-group select{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:5px;padding:10px 14px;
+  font-family:var(--mono);font-size:13px;color:var(--text);
+  outline:none;transition:border-color 0.2s;
+  appearance:none;
+}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--green-mid);}
+.form-group textarea{min-height:110px;resize:vertical;}
+.btn-submit{
+  background:var(--green);color:#0d0f14;
+  border:none;padding:11px 24px;
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  border-radius:5px;cursor:pointer;align-self:flex-start;
+  transition:opacity 0.2s;letter-spacing:0.05em;
+}
+.btn-submit:hover{opacity:0.85;}
+.contact-info-panel{display:flex;flex-direction:column;gap:16px;}
+.info-line{
+  display:flex;align-items:center;gap:14px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:6px;padding:14px 16px;
+  font-family:var(--mono);font-size:13px;
+}
+.info-line .key{color:var(--muted2);min-width:80px;}
+.info-line .val{color:var(--green);}
+.info-note{font-size:13px;color:var(--muted);line-height:1.7;margin-top:8px;}
+
+/* FOOTER */
+footer{
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:32px 48px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-brand{font-family:var(--mono);font-size:14px;color:var(--muted);}
+.footer-brand span{color:var(--green);}
+.footer-right{font-family:var(--mono);font-size:12px;color:var(--muted2);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.hero-content>*{animation:fadeUp 0.6s ease both;}
+.terminal-bar{animation-delay:0.05s;}
+.hero h1{animation-delay:0.18s;}
+.hero-desc{animation-delay:0.3s;}
+.hero-tags{animation-delay:0.42s;}
+.hero-actions{animation-delay:0.54s;}
+
+@media(max-width:860px){
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  section{padding:56px 20px;}
+  .hero{padding:90px 20px 60px;}
+  .about-grid,.contact-split{grid-template-columns:1fr;}
+  .discord-card{flex-direction:column;}
+  footer{padding:24px 20px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-brand">ABC<span>.dev</span></a>
+  <ul class="nav-links">
+    <li><a href="#about"><span class="prefix">~/</span>about</a></li>
+    <li><a href="#projects"><span class="prefix">~/</span>projects</a></li>
+    <li><a href="#discord"><span class="prefix">~/</span>discord</a></li>
+    <li><a href="#contact"><span class="prefix">~/</span>contact</a></li>
+    <li><a href="https://discord.gg/9xvzG4bdFJ" class="nav-disc">Join Server</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-bg-glow"></div>
+  <div class="hero-content">
+    <div class="terminal-bar">
+      <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+      <div class="t-text">abc@dev:~$ <span>whoami</span></div>
+    </div>
+    <h1>
+      <span class="line1">// hello, world</span>
+      <span class="name">I'm ABC</span><span class="cursor"></span>
+    </h1>
+    <p class="hero-desc">
+      Developer, Discord community builder, and tinkerer.<br/>
+      Building <strong>tools, bots, and projects</strong> for fun and for the community.<br/>
+      Also runs <strong>ABC Admin</strong> — the backbone of the ABC ecosystem.
+    </p>
+    <div class="hero-tags">
+      <span class="tag green">ABC Admin</span>
+      <span class="tag blue">Discord Dev</span>
+      <span class="tag purple">Web Dev</span>
+      <span class="tag orange">Game Dev</span>
+      <span class="tag">JavaScript</span>
+      <span class="tag">Python</span>
+      <span class="tag">Node.js</span>
+    </div>
+    <div class="hero-actions">
+      <a href="#projects" class="btn-green">./projects</a>
+      <a href="#discord" class="btn-ghost">Discord Server →</a>
+    </div>
+  </div>
+
+  <div class="hero-code">
+    <div class="code-bar">
+      <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+      <span>about_abc.js</span>
+    </div>
+    <div class="code-body">
+      <div><span class="c-purple">const</span> <span class="c-blue">abc</span> <span class="c-muted">=</span> {</div>
+      <div>&nbsp;&nbsp;<span class="c-green">name</span>: <span class="c-orange">"ABC"</span>,</div>
+      <div>&nbsp;&nbsp;<span class="c-green">role</span>: <span class="c-orange">"Developer"</span>,</div>
+      <div>&nbsp;&nbsp;<span class="c-green">focus</span>: [</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-orange">"Discord Bots"</span>,</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-orange">"Web Apps"</span>,</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-orange">"Game Dev"</span>,</div>
+      <div>&nbsp;&nbsp;],</div>
+      <div>&nbsp;&nbsp;<span class="c-green">status</span>: <span class="c-orange">"building..."</span>,</div>
+      <div>&nbsp;&nbsp;<span class="c-green">coffee</span>: <span class="c-purple">true</span>,</div>
+      <div>};</div>
+      <br/>
+      <div><span class="c-muted">// always open to collabs</span></div>
+      <div><span class="c-blue">abc</span>.<span class="c-green">getInTouch</span>();</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-tag">about</div>
+  <h2>Who is ABC?</h2>
+
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-num">ABC</div><div class="stat-lbl">Admin founder</div></div>
+    <div class="stat-box"><div class="stat-num">5+</div><div class="stat-lbl">Projects shipped</div></div>
+    <div class="stat-box"><div class="stat-num">24/7</div><div class="stat-lbl">Building mode</div></div>
+    <div class="stat-box"><div class="stat-num">NZ</div><div class="stat-lbl">Based in</div></div>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-text">
+      <p>Hey — I'm <strong>ABC</strong>. I build things on the internet. That includes Discord bots, web tools, games, and whatever else catches my eye. I'm the creator of <strong>ABC Admin</strong>, a platform I built to manage and run the ABC ecosystem of projects and communities.</p>
+      <p>When I'm not pushing commits, I'm gaming, running my Discord server, or dreaming up the next thing to build. I like clean code, dark themes, and projects that actually solve problems.</p>
+      <p>If you've found this page, you probably know me from Discord or one of my projects. Feel free to reach out — collabs and community projects are always welcome.</p>
+    </div>
+    <div>
+      <div class="section-tag" style="margin-bottom:20px;">skills</div>
+      <div class="skill-list">
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">JavaScript / Node.js</span><span class="skill-pct">90%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Discord.js / Bot Dev</span><span class="skill-pct">88%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">HTML / CSS / Web</span><span class="skill-pct">85%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Python</span><span class="skill-pct">70%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Game Dev</span><span class="skill-pct">60%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:60%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section-tag">projects</div>
+  <h2>Things I've Built</h2>
+  <p class="section-sub">A selection of projects — from Discord tools to web apps. Always adding more.</p>
+
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">ABC Admin</div>
+        <div class="project-status status-live">● live</div>
+      </div>
+      <p class="project-desc">The centralised admin platform for managing all ABC projects, communities, and tools. Built from scratch and continuously improved.</p>
+      <div class="project-stack">
+        <span class="stack-tag">Node.js</span><span class="stack-tag">JavaScript</span><span class="stack-tag">Web</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">ABC Bot</div>
+        <div class="project-status status-live">● live</div>
+      </div>
+      <p class="project-desc">Custom Discord bot powering the ABC server — moderation, fun commands, server management, and community features.</p>
+      <div class="project-stack">
+        <span class="stack-tag">Discord.js</span><span class="stack-tag">Node.js</span><span class="stack-tag">MongoDB</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">Dev Tools</div>
+        <div class="project-status status-wip">◌ wip</div>
+      </div>
+      <p class="project-desc">A collection of small developer utilities and scripts I use day-to-day. Some may eventually become standalone tools.</p>
+      <div class="project-stack">
+        <span class="stack-tag">Python</span><span class="stack-tag">JS</span><span class="stack-tag">CLI</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">Game Project</div>
+        <div class="project-status status-wip">◌ wip</div>
+      </div>
+      <p class="project-desc">An indie game project in development. Details coming soon — follow the Discord server for updates and early access.</p>
+      <div class="project-stack">
+        <span class="stack-tag">Game Dev</span><span class="stack-tag">TBA</span>
+      </div>
+    </div>
+
+    <div class="project-card" style="border-style:dashed;display:flex;align-items:center;justify-content:center;min-height:160px;text-align:center;">
+      <div>
+        <div style="font-family:var(--mono);font-size:24px;color:var(--muted2);margin-bottom:8px;">[  +  ]</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--muted2);">more coming soon</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DISCORD -->
+<section class="discord-section" id="discord">
+  <div class="section-tag">community</div>
+  <h2>Discord Server</h2>
+  <p class="section-sub">Join the ABC Discord — the main hub for updates, community, gaming, and project discussion.</p>
+  <div class="discord-card">
+    <div class="discord-icon">
+      <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+    </div>
+    <div class="discord-text">
+      <h3>ABC's Discord Server</h3>
+      <p>The community hub for everything ABC — gaming sessions, project updates, dev chat, and general hangouts. Everyone's welcome.</p>
+      <a href="https://discord.gg/9xvzG4bdFJ" class="btn-discord">Join the Server →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-tag">contact</div>
+  <h2>Get in Touch</h2>
+  <p class="section-sub">Want to collaborate, report a bug, or just say hi? Drop a message below or find me on Discord.</p>
+  <div class="contact-split">
+    <div class="contact-form">
+      <div class="form-group">
+        <label>Name / Handle</label>
+        <input type="text" placeholder="your_username"/>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <select>
+          <option>General / Say hi</option>
+          <option>Collaboration</option>
+          <option>Bug Report</option>
+          <option>ABC Admin</option>
+          <option>Discord</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="// your message here..."></textarea>
+      </div>
+      <button class="btn-submit" type="button">$ send_message</button>
+    </div>
+    <div class="contact-info-panel">
+      <div class="section-tag" style="margin-bottom:4px;">reach me at</div>
+      <div class="info-line">
+        <span class="key">email:</span>
+        <span class="val">abc123de456.0@gmail.com</span>
+      </div>
+      <div class="info-line">
+        <span class="key">discord:</span>
+        <span class="val">ABC Server ↗</span>
+      </div>
+      <div class="info-line">
+        <span class="key">platform:</span>
+        <span class="val">abc-admin.dev</span>
+      </div>
+      <p class="info-note">Fastest response is usually on Discord. Email is checked regularly for project and collab enquiries.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand"><span>ABC</span>.dev — Developer & Discord</div>
+  <div class="footer-right">© 2025 ABC · Built by ABC</div>
+</footer>
+
+<script>
+document.querySelector('.btn-submit').addEventListener('click',function(){
+  this.textContent='$ message_sent ✓';
+  this.style.background='#00b07a';
+  setTimeout(()=>{this.textContent='$ send_message';this.style.background='';},3000);
+});
+</script>
+</body>
+</html>
